@@ -20,8 +20,24 @@
  * }
  *
  */
-function getDNSStats(/* domains */) {
-  throw new Error('Not implemented');
+
+// Thanks rkhaslarov for help.
+function getDNSStats(domains) {
+  const dnsStat = {};
+  domains.forEach((domain) => {
+    const reversedDomain = domain.split('.').reverse();
+    while (reversedDomain.length > 0) {
+      const first = reversedDomain.shift();
+      if (dnsStat[`.${first}`]) {
+        dnsStat[`.${first}`]++;
+      } else {
+        dnsStat[`.${first}`] = 1;
+      }
+      const second = reversedDomain.shift();
+      if (second) reversedDomain.unshift(`${first}.${second}`);
+    }
+  });
+  return dnsStat;
 }
 
 module.exports = getDNSStats;
